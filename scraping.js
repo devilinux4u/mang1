@@ -1,9 +1,15 @@
+require('dotenv').config();
 const puppeteer = require("puppeteer");
 
 const scrape = async (res) => {
 
+    const browser = await puppeteer.launch({
+        executablePath:
+            process.env.NODE_ENV === 'production'
+                ? process.env.PUPPETEER_EXECUTABLE_PATH
+                : puppeteer.executablePath(),
+    });
     try {
-        const browser = await puppeteer.launch();
         const page = await browser.newPage();
 
         await page.goto('https://developer.chrome.com/');
@@ -24,7 +30,7 @@ const scrape = async (res) => {
         res.send(fullTitle);
     } catch (e) {
         console.log(e)
-        res.send('not working solo\n' + e) ;
+        res.send('not working solo\n' + e);
     } finally {
         await browser.close();
     }
